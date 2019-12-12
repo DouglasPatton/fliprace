@@ -8,6 +8,21 @@ class FlipRace():
             self.pattern_search()
         pass
     
+    def build_pattern_combos(self,length,sides=2):
+        slist=[str(i) for i in range(sides)]
+        plist=['0']
+        
+        for i in range(length):
+            plist2=[]
+            for p in plist:
+                for s in slist:
+                    plist2.append(p+s)
+                plist=plist2.copy()
+        print(plist)
+                
+                
+            
+    
     def pattern_search(self,runcount=None,flipcount=None,sides=None,patternlist=None,verbose=0):
         
         
