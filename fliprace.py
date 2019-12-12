@@ -76,7 +76,7 @@ class FlipRace():
                 runstring.extend(self.flipper(1,flipcount=flipcount,sides=sides))
                 win_idx=re.search(win_pattern_string,runstring).end()
                 if verbose==1: 
-                    print(f'extension #{}of runstring. win_idx:{win_idx} for {win_pattern_string} in {runstring}')  
+                    print(f'extension #{i}of runstring. win_idx:{win_idx} for {win_pattern_string} in {runstring}')  
             winlist.append(win_idx)
         return winlist
 
