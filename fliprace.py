@@ -44,7 +44,7 @@ class FlipRace():
             patternlist=[];i=0
             for i in range(patterncount):
                 i+=1
-                patternlist.append(input('enter pattern#{i} with no spaces: '))
+                patternlist.append(input(f'enter pattern# {i} with no spaces: '))
             sides=int(input('how many sides on the coin?: '))
             runcount=int(input('how many runs?: '))
         if do_default==1:
