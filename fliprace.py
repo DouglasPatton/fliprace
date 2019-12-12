@@ -17,10 +17,10 @@ class FlipRace():
             if runcount==None:runcount=1000
             if patternlist==None:patternlist=['00','01']
             if sides==None:sides=2
-            if flipcount==None:
-                patternlengthlist=[len(p) for p in patternlist]
-                maxp=max(patternlengthlist)
-                flipcount=10**(maxp+sides-1)
+        if flipcount==None:
+            patternlengthlist=[len(p) for p in patternlist]
+            maxp=max(patternlengthlist)
+            flipcount=10**(maxp+sides-1)
             
         runlist=self.flipper(runcount,flipcount=flipcount,sides=sides)
         results=[]
