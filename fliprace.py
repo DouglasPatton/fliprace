@@ -1,35 +1,58 @@
 import random
 import re
 
-def class FlipRace():
+class FlipRace():
     
     def __init__(self,pattern_search=None,):
         if not pattern_search==None:
-            self.do_pattern_search()
+            self.pattern_search()
         pass
     
-    def do_pattern_search(self,runcount=None,flipcount=None,sides=None,pattern_count=None)
+    def pattern_search(self,runcount=None,flipcount=None,sides=None,patternlist=None,verbose=0):
         
         
         if __name__=='__main__':
-            self.getinputs()
+            patternlist,runcount,sides=self.getinputs()
         else:
-            if runcount==None:
-                runcount=1000
+            if runcount==None:runcount=1000
+            if patternlist==None:patternlist=['00','01']
+            if sides==None:sides=2
             if flipcount==None:
-                flipcount=50
-            if 
+                patternlengthlist=[len(p) for p in patternlist]
+                maxp=max(patternlengthlist)
+                flipcount=10**(maxp+sides-1)
+            
+        runlist=self.flipper(runcount,flipcount=flipcount,sides=sides)
+        results=[]
+        for p in patternlist:
+            results.append(self.win_finder(p,runlist,flipcount,sides,verbose=verbose))
+        self.patternrunlistlist=results
+        self.patternavgwinlist=[sum(rlist)/runcount for rlist in results]
+        
+        self.printsimpleresults(patternlist,self.patternavgwinlist)
+        return
+    
+    def printsimpleresults(self,patternlist,scorelist):
+        for i,p in enumerate(patternlist):
+            print(f'pattern#{i}({p}) has score:{scorelist[i]}')
+                
     def getinputs(self,):
         #this should only be called if __name__=='__main__', i.e., the .py file is being run from the console
         do_default=int(input('type 1 if you want to run the default or 0 if you want to enter your own details: '))
         if do_default==0:
-            pattern1=input('enter pattern1 with no spaces: ')
-            pattern2=input('enter pattern2 with no spaces: ')
-            runcount=int(input('how many runs?'))
-            win_compare(pattern1,pattern2,runcount)
-
+            patterncount=int(input('how many patterns do you want to try?: '))
+            patternlist=[];i=0
+            for i in range(patterncount):
+                i+=1
+                patternlist.append(input('enter pattern#{i} with no spaces: '))
+            sides=int(input('how many sides on the coin?: '))
+            runcount=int(input('how many runs?: '))
         if do_default==1:
-            win_compare('00','01',runcount=1000,verbose=0)
+            sides=2
+            patternlist=['00','01']
+            runcount=1000
+        return patternlist,runcount,sides
+            
 
     def flipper(self, runcount,flipcount=50,sides=2):
         random.seed(1)
@@ -57,22 +80,11 @@ def class FlipRace():
             winlist.append(win_idx)
         return winlist
 
-    def win_compare(self,patternlist,runcount=10000,flipcount=None,sides=2,verbose=0):
-        for pattern in patternlist:
-            
-        runlist=self.flipper(runcount,flipcount=flipcount,sides=sides)
-        winlist1=self.win_finder(pattern1,runlist,flipcount,sides,verbose=verbose)
-        winsum1=sum(winlist1)
-        winlist2=self.win_finder(pattern2,runlist,flipcount,sides,verbose=verbose)
-        winsum2=sum(winlist2)
-        avgwin1=winsum1/runcount
-        avgwin2=winsum2/runcount
-        print(f'pattern1:{pattern1} wins after {avgwin1} rolls')
-        print(f'pattern2:{pattern2} wins after {avgwin2} rolls')
+
 
     
 if __name__=='__main__':
-    test=FlipRace(pattern_search=True):
+    test=FlipRace(pattern_search=True)
         
     
    
