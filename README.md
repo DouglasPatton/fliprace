@@ -1,2 +1,2 @@
 # fliprace
-flip coins/die/bingo until you match your pattern
+flip coins/die/etc until you match your pattern
