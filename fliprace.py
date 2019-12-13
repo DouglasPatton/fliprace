@@ -7,7 +7,9 @@ from time import sleep
 class FlipRace():
     
     def __init__(self,pattern_search=None,):
-        self.cores=int(6)#free cores for parallel processing
+        cpu_count=multiprocessing.cpu_count()
+        self.cores=int(cpu_count-1)#free cores for parallel processing
+        print(f'FlipRace will use {self.cores} of {cpu_count} processors for computation')
         if not pattern_search==None:
             self.pattern_search()
 
@@ -68,14 +70,22 @@ class FlipRace():
                 
     def getinputs(self,):
         #this should only be called if __name__=='__main__', i.e., the .py file is being run from the console
-        do_default=int(input('type 1 if you want to run the default or 0 if you want to enter your own details: '))
+        print('type 1 if you want to run the default or ')
+        do_default=int(input('type 0 if you want to enter your own details: '))
         if do_default==0:
-            patterncount=int(input('how many patterns do you want to try?: '))
-            patternlist=[];i=0
-            for i in range(patterncount):
-                i+=1
-                patternlist.append(input(f'enter pattern# {i} with no spaces: '))
             sides=int(input('how many sides on the coin?: '))
+            print('type 1 if you want all patterns of a certain length and ')
+            patternsource=int(input('type 0 if you want to manually enter patterns: '))
+            if patternsource==0:
+                patterncount=int(input('how many patterns do you want to try?: '))
+                patternlist=[];i=0
+                for i in range(patterncount):
+                    i+=1
+                    patternlist.append(input(f'enter pattern# {i} with no spaces: '))
+            if patternsource==1:
+                patterncount=int(input('how many flips in the pattern?: '))
+                patternlist=self.build_pattern_combos(patterncount,sides=sides)
+            
             runcount=int(input('how many runs?: '))
         if do_default==1:
             sides=2
