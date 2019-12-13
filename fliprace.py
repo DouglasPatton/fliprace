@@ -2,6 +2,7 @@ import random
 import multiprocessing
 import re
 from time import sleep
+import pickle
 
 
 class FlipRace():
@@ -49,15 +50,22 @@ class FlipRace():
                 pool.close()
                 pool.join()
         results=pattern_win_list
-
+        self.saveit(patternlist,results)
         
-        
-        #for p in patternlist:
-        #    results.append(self.win_finder(p,runlist,flipcount,sides,verbose=verbose))
         self.patternrunlistlist=results
         self.patternavgwinlist=[sum(rlist)/runcount for rlist in results]
         
         self.printsimpleresults(patternlist,self.patternavgwinlist)
+        return
+
+    def saveit(self,patternlist,results):
+        try:
+            with open('savefile','rb') as f:
+                old_results=pickled.load(f)
+        except: old_results=[]
+        old_results.append((patternlist,results))
+        with open('savefile','wb') as f:
+            pickle.dump(old_results,f)
         return
     
     def win_finder_wrapper(self,idx):
