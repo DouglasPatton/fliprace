@@ -1,14 +1,16 @@
 import random
 import multiprocessing
 import re
+from time import sleep
 
 
 class FlipRace():
     
     def __init__(self,pattern_search=None,):
+        self.cores=int(6)#free cores for parallel processing
         if not pattern_search==None:
             self.pattern_search()
-        pass
+
     
     def build_pattern_combos(self,length,sides=2):
         slist=[str(i) for i in range(sides)]
@@ -20,14 +22,10 @@ class FlipRace():
                 for s in slist:
                     plist2.append(p+s)
                 plist=plist2
-        return plist
-                
-                
+        return plist           
             
     
     def pattern_search(self,runcount=None,flipcount=None,sides=None,patternlist=None,verbose=0):
-        
-        
         if __name__=='__main__':
             patternlist,runcount,sides=self.getinputs()
         else:
@@ -39,12 +37,11 @@ class FlipRace():
             patternlengthlist=[len(p) for p in patternlist]
             maxp=max(patternlengthlist)
             flipcount=10**(maxp+sides-1)
-            
         runlist=self.flipper(runcount,flipcount=flipcount,sides=sides)
-        results=[]
         patterncount=len(patternlist)
         self.patternlist=patternlist
-        with multiprocessing.Pool(processes=6) as pool:
+        self.runlist=runlist;self.flipcount=flipcount;self.sides=sides;self.verbose=verbose
+        with multiprocessing.Pool(processes=self.cores) as pool:
                 pattern_win_list=pool.map(self.win_finder_wrapper,[i for i in range(patterncount)])
                 sleep(2)
                 pool.close()
@@ -63,7 +60,7 @@ class FlipRace():
     
     def win_finder_wrapper(self,idx):
         print(f'wrapper starting idx:{idx}')
-        return self.win_finder(self.patternlist[idx])
+        return self.win_finder(self.patternlist[idx],self.runlist,self.flipcount,self.sides,verbose=self.verbose)
     
     def printsimpleresults(self,patternlist,scorelist):
         for i,p in enumerate(patternlist):
@@ -88,15 +85,39 @@ class FlipRace():
             
 
     def flipper(self, runcount,flipcount=50,sides=2):
+        
+        runcount=int(int(runcount/self.cores)*self.cores)
+        #print(runcount)
+        runlength=int(runcount/self.cores)
         random.seed(1)
-        runlist=[]
+        #runlist=[]
+        self.flipcount=flipcount
+        self.sides=sides
+        arglist=[runlength]*self.cores
+        #print('arglist len:',len(arglist))
+
+            
+        with multiprocessing.Pool(processes=self.cores) as pool:
+                
+                runlistlist=pool.map(self.flip_wrap,arglist)
+                sleep(2)
+                pool.close()
+                pool.join()
+        #print('runlistlist',runlistlist)
+        runlist=[ii for i in runlistlist for ii in i]
+        #print('runlist',runlist)
+        return runlist
+    
+    def flip_wrap(self,runcount):
+        arunlist=[]
         for _ in range(runcount):
             randstring=''
-            for _ in range(flipcount):
-                randstring+=str(random.randint(0,sides-1))
-            runlist.append(randstring)
-        return runlist
-
+            for _ in range(self.flipcount):
+                randstring+=str(random.randint(0,self.sides-1))
+            arunlist.append(randstring)
+        #print('flipper:arunlist:',arunlist)
+        return arunlist
+    
     def win_finder(self, win_pattern_string,runlist,flipcount,sides,verbose=0):
         winlist=[]
         for runstring in runlist:
