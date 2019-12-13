@@ -62,6 +62,7 @@ class FlipRace():
         return
     
     def win_finder_wrapper(self,idx):
+        print(f'wrapper starting idx:{idx}')
         return self.win_finder(self.patternlist[idx])
     
     def printsimpleresults(self,patternlist,scorelist):
