@@ -1,5 +1,7 @@
 import random
+import multiprocessing
 import re
+
 
 class FlipRace():
     
@@ -12,13 +14,13 @@ class FlipRace():
         slist=[str(i) for i in range(sides)]
         plist=['0']
         
-        for i in range(length):
+        for i in range(length-1):
             plist2=[]
             for p in plist:
                 for s in slist:
                     plist2.append(p+s)
-                plist=plist2.copy()
-        print(plist)
+                plist=plist2
+        return plist
                 
                 
             
@@ -31,6 +33,7 @@ class FlipRace():
         else:
             if runcount==None:runcount=1000
             if patternlist==None:patternlist=['00','01']
+            print(f'patternlist{patternlist}')
             if sides==None:sides=2
         if flipcount==None:
             patternlengthlist=[len(p) for p in patternlist]
@@ -39,13 +42,27 @@ class FlipRace():
             
         runlist=self.flipper(runcount,flipcount=flipcount,sides=sides)
         results=[]
-        for p in patternlist:
-            results.append(self.win_finder(p,runlist,flipcount,sides,verbose=verbose))
+        patterncount=len(patternlist)
+        self.patternlist=patternlist
+        with multiprocessing.Pool(processes=6) as pool:
+                pattern_win_list=pool.map(self.win_finder_wrapper,[i for i in range(patterncount)])
+                sleep(2)
+                pool.close()
+                pool.join()
+        results=pattern_win_list
+
+        
+        
+        #for p in patternlist:
+        #    results.append(self.win_finder(p,runlist,flipcount,sides,verbose=verbose))
         self.patternrunlistlist=results
         self.patternavgwinlist=[sum(rlist)/runcount for rlist in results]
         
         self.printsimpleresults(patternlist,self.patternavgwinlist)
         return
+    
+    def win_finder_wrapper(self,idx):
+        return self.win_finder(self.patternlist[idx])
     
     def printsimpleresults(self,patternlist,scorelist):
         for i,p in enumerate(patternlist):
